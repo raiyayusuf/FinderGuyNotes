@@ -236,6 +236,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## Author
 
-**Rai Yusuf** — [@raiyayusuf](https://github.com/raiyayusuf)
+**Raiya Yusuf Priatmojo (Sinchan)** — [@raiyayusuf](https://github.com/raiyayusuf)
 
 First iOS project — learning SwiftUI and SwiftData along the way!
