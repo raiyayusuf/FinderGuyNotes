@@ -1,3 +1,155 @@
+/* ============================================
+   ViewModels/NotesViewModel.swift
+   SHARED STATE AND BUSINESS LOGIC
+   ============================================ */
+
+import SwiftUI
+import SwiftData
+
+/* ============================================
+   SPLIT MODE ENUM
+   ============================================ */
+enum SplitMode {
+    case balanced       // 50:50 default
+    case studyTaskFull  // Study Task full screen
+    case developerFull  // Developer full screen
+}
+
+/* ============================================
+   HISTORY FILTER ENUM
+   ============================================ */
+enum HistoryFilter: String, CaseIterable {
+    case all = "All"
+    case studyTask = "Study Task"
+    case developer = "Developer"
+    case merged = "Merged"
+}
+
+/* ============================================
+   NOTES VIEW MODEL
+   ============================================ */
+@Observable
+final class NotesViewModel {
+    
+    /* ============================================
+       UI STATE
+       ============================================ */
+    var splitMode: SplitMode = .balanced
+    var dragOffset: CGFloat = 0
+    var selectedTab: Int = 0 // 0 = Notes, 1 = Board, 2 = History
+    var historyFilter: HistoryFilter = .all
+    
+    /* ============================================
+       SHEET STATE
+       ============================================ */
+    var showAddStudyTask: Bool = false
+    var showAddDeveloper: Bool = false
+    var selectedNote: Note?
+    
+    /* ============================================
+       SPLIT RATIO CALCULATION
+       ============================================ */
+    var splitRatio: CGFloat {
+        switch splitMode {
+        case .balanced: return 0.5
+        case .studyTaskFull: return 1.0
+        case .developerFull: return 0.0
+        }
+    }
+    
+    // Left panel width fraction
+    var leftFraction: CGFloat {
+        let base: CGFloat = splitRatio
+        let dragInfluence = dragOffset / 800
+        return max(0.0, min(1.0, base + dragInfluence))
+    }
+    
+    // Right panel width fraction
+    var rightFraction: CGFloat {
+        1.0 - leftFraction
+    }
+    
+    /* ============================================
+       DRAG GESTURE HANDLING
+       ============================================ */
+    func handleDragEnd(totalWidth: CGFloat) {
+        let threshold = totalWidth * 0.3
+        
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+            if dragOffset > threshold {
+                splitMode = .studyTaskFull
+            } else if dragOffset < -threshold {
+                splitMode = .developerFull
+            } else {
+                splitMode = .balanced
+            }
+            dragOffset = 0
+        }
+    }
+    
+    func resetToSplit() {
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+            splitMode = .balanced
+            dragOffset = 0
+        }
+    }
+    
+    /* ============================================
+       NOTE FILTERING
+       ============================================ */
+    func studyTaskNotes(from notes: [Note]) -> [Note] {
+        notes
+            .filter { $0.isStudyTask }
+            .sorted { $0.date > $1.date }
+    }
+    
+    func developerNotes(from notes: [Note]) -> [Note] {
+        notes
+            .filter { $0.isDeveloper }
+            .sorted { $0.date > $1.date }
+    }
+    
+    func filteredHistoryNotes(from notes: [Note]) -> [Note] {
+        switch historyFilter {
+        case .all:
+            return notes.sorted { $0.date > $1.date }
+        case .studyTask:
+            return studyTaskNotes(from: notes)
+        case .developer:
+            return developerNotes(from: notes)
+        case .merged:
+            return notes.sorted { $0.date > $1.date }
+        }
+    }
+    
+    /* ============================================
+       BOARD ZIGZAG LAYOUT
+       ============================================ */
+    func zigzagPairs(from notes: [Note]) -> [(Note?, Note?)] {
+        let study = studyTaskNotes(from: notes)
+        let dev = developerNotes(from: notes)
+        
+        let maxCount = max(study.count, dev.count)
+        guard maxCount > 0 else { return [] }
+        
+        var pairs: [(Note?, Note?)] = []
+        
+        for i in 0..<maxCount {
+            let s = i < study.count ? study[i] : nil
+            let d = i < dev.count ? dev[i] : nil
+            
+            if i % 2 == 0 {
+                // Even row: StudyTask left, Developer right
+                pairs.append((s, d))
+            } else {
+                // Odd row: Developer left, StudyTask right
+                pairs.append((d, s))
+            }
+        }
+        
+        return pairs
+    }
+}
 import SwiftUI
 import SwiftData
 

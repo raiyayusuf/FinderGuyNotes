@@ -1,5 +1,13 @@
+/* ============================================
+   Views/NoteCardView.swift
+   REUSABLE NOTE CARD COMPONENT
+   ============================================ */
+
 import SwiftUI
 
+/* ============================================
+   NOTE CARD VIEW
+   ============================================ */
 struct NoteCardView: View {
     let note: Note
     var showTypeBadge: Bool = false
@@ -7,7 +15,7 @@ struct NoteCardView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: compact ? 6 : 10) {
-            // Header row with type badge (optional)
+            // Type badge header
             if showTypeBadge {
                 HStack(spacing: 6) {
                     Circle()
@@ -21,14 +29,14 @@ struct NoteCardView: View {
                 }
             }
             
-            // Title
+            // Card title
             Text(note.title)
                 .font(compact ? .subheadline : .headline)
                 .fontWeight(.semibold)
                 .foregroundColor(.navy)
                 .lineLimit(compact ? 2 : 3)
             
-            // Content
+            // Card content
             if !note.content.isEmpty {
                 Text(note.content)
                     .font(compact ? .caption : .subheadline)
@@ -47,11 +55,13 @@ struct NoteCardView: View {
         }
         .padding(compact ? 12 : 16)
         .frame(maxWidth: .infinity, alignment: .leading)
+        // Card background
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(Color.appWhite)
                 .shadow(color: .cardShadow, radius: 6, x: 0, y: 3)
         )
+        // Card border
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(

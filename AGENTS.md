@@ -79,9 +79,43 @@ Resources/        → Assets.xcassets and other resources
 
 ### Formatting
 - 4 spaces for indentation
-- `// MARK: -` comments to separate sections
 - Trailing closures for SwiftUI modifiers
 - Group related modifiers together
+
+### Comment Structure (MANDATORY — see `Anomali/TemplateCommentar`)
+
+Every Swift file MUST follow the 3-tier comment system:
+
+**1. File Header (WAJIB — every file, no exception):**
+```swift
+/* ============================================
+   folder/file-name.swift
+   SHORT DESCRIPTION
+   ============================================ */
+```
+
+**2. Section Separator (CAPSLOCK — for major blocks only):**
+```swift
+/* ============================================
+   SECTION NAME
+   ============================================ */
+```
+
+**3. Inline Comment (normal case, 2-5 words — for labels):**
+```swift
+// Background color
+// Header section
+// Empty state
+```
+
+**Rules:**
+- File header is MANDATORY on every file
+- CAPSLOCK comments only for important sections (Model, ViewModel, Main View, Gesture, etc.)
+- Inline comments for labeling views/modifiers/code lines only
+- NEVER mix CAPSLOCK with inline comments
+- Keep inline comments short (2-5 words max)
+- Do NOT use `// MARK: -` — use the CAPSLOCK section format instead
+- Do NOT use comments for disabled/commented-out code
 
 ### SwiftUI Conventions
 - Use `some View` return types (not explicit types)

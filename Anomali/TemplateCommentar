@@ -1,0 +1,172 @@
+============================================================
+TEMPLATE KOMENTAR FINDER GUY NOTES (SWIFT)
+============================================================
+
+Template komentar ini WAJIB digunakan di SEMUA file Swift
+dalam project FinderGuyNotes. Diadaptasi dari Template
+Komentar GSE Jogja untuk konteks Swift/SwiftUI.
+
+------------------------------------------------------------
+1. KOMENTAR AWAL FILE (WAJIB)
+------------------------------------------------------------
+Digunakan di SETIAP file untuk mendeklarasikan path dan fungsi file.
+Format:
+
+/* ============================================
+   folder/nama-file.swift
+   DESKRIPSI SINGKAT FILE
+   ============================================ */
+
+Contoh:
+/* ============================================
+   Views/NotesView.swift
+   SPLIT VIEW WITH FINDER GUY DRAG GESTURE
+   ============================================ */
+
+/* ============================================
+   Models/Note.swift
+   SWIFTDATA NOTE MODEL
+   ============================================ */
+
+
+------------------------------------------------------------
+2. KOMENTAR TENGAH (CAPSLOCK)
+------------------------------------------------------------
+Digunakan untuk memisahkan section/block kode yang besar dan penting.
+Gunakan huruf KAPITAL semua, pisah kata dengan spasi.
+Format:
+
+/* ============================================
+   NAMA SECTION ATAU JUDUL BLOCK
+   ============================================ */
+
+Contoh:
+/* ============================================
+   ANIMATION VARIANTS
+   ============================================ */
+
+/* ============================================
+   HANDLER FUNCTIONS
+   ============================================ */
+
+/* ============================================
+   SPLIT VIEW LAYOUT
+   ============================================ */
+
+/* ============================================
+   DRAG GESTURE LOGIC
+   ============================================ */
+
+
+------------------------------------------------------------
+3. KOMENTAR INLINE (bukan CAPSLOCK)
+------------------------------------------------------------
+Digunakan untuk memberi label pada view, modifier, atau baris kode sederhana.
+Tidak terlalu panjang, cukup 2-5 kata. Huruf normal (tidak kapital).
+Format:
+
+// Nama komponen
+// Deskripsi singkat
+
+Contoh:
+// Background gradient
+// Header section
+// Loading state
+// Empty state
+// Add button
+// Card shadow
+
+
+------------------------------------------------------------
+ATURAN TAMBAHAN
+------------------------------------------------------------
+
+1. Komentar awal file WAJIB ada di setiap file, tanpa terkecuali.
+
+2. Komentar capslock hanya untuk blok kode yang benar-benar penting
+   (seperti Model Properties, Computed Properties, Helper Functions,
+   Main View Body, Gesture Handlers, Sheet Presentations).
+
+3. Komentar inline hanya untuk memberi label pada view, modifier,
+   atau baris kode. Jangan digunakan untuk comment kode yang
+   dinonaktifkan.
+
+4. Jangan mencampur komentar capslock dengan komentar inline.
+
+5. Hindari komentar panjang di inline comment (cukup 2-5 kata).
+
+6. Tidak ada komentar tambahan yang tidak termasuk dalam 3 kategori
+   di atas.
+
+
+------------------------------------------------------------
+CONTOH PENGGUNAAN LENGKAP
+------------------------------------------------------------
+
+/* ============================================
+   Views/NotesView.swift
+   SPLIT VIEW WITH FINDER GUY DRAG GESTURE
+   ============================================ */
+
+import SwiftUI
+import SwiftData
+
+/* ============================================
+   NOTES VIEW
+   ============================================ */
+struct NotesView: View {
+    @Query(sort: \Note.date, order: .reverse) private var allNotes: [Note]
+    @Bindable var viewModel: NotesViewModel
+
+    var body: some View {
+        GeometryReader { geo in
+            let totalWidth = geo.size.width
+
+            ZStack {
+                // Background color
+                Color(.systemGroupedBackground)
+                    .ignoresSafeArea()
+
+                HStack(spacing: 0) {
+                    /* ============================================
+                       LEFT PANEL — STUDY TASK
+                       ============================================ */
+                    if viewModel.leftFraction > 0.05 {
+                        sidePanel(
+                            type: NoteType.studyTask,
+                            notes: viewModel.studyTaskNotes(from: allNotes),
+                            isAddSheet: $viewModel.showAddStudyTask
+                        )
+                        .frame(width: totalWidth * viewModel.leftFraction)
+                    }
+
+                    // Finder guy divider
+                    finderGuyDivider(screenWidth: totalWidth)
+
+                    /* ============================================
+                       RIGHT PANEL — DEVELOPER
+                       ============================================ */
+                    if viewModel.rightFraction > 0.05 {
+                        sidePanel(
+                            type: NoteType.developer,
+                            notes: viewModel.developerNotes(from: allNotes),
+                            isAddSheet: $viewModel.showAddDeveloper
+                        )
+                        .frame(width: totalWidth * viewModel.rightFraction)
+                    }
+                }
+            }
+        }
+    }
+
+    /* ============================================
+       DRAG GESTURE LOGIC
+       ============================================ */
+    private func finderGuyDivider(screenWidth: CGFloat) -> some View {
+        // Divider implementation
+    }
+}
+
+============================================================
+END OF TEMPLATE
+============================================================

@@ -1,3 +1,80 @@
+/* ============================================
+   Extensions/Color+Extensions.swift
+   COLOR HEX INITIALIZER AND APP PALETTE
+   ============================================ */
+
+import SwiftUI
+
+/* ============================================
+   COLOR HEX INITIALIZER
+   ============================================ */
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB 12-bit
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB 24-bit
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB 32-bit
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (255, 0, 0, 0)
+        }
+        
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue: Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
+}
+
+/* ============================================
+   APP COLOR PALETTE
+   ============================================ */
+extension Color {
+    // #318AEB — active buttons, accents
+    static let primaryBlue = Color(hex: "#318AEB")
+    
+    // #0C2957 — text, shadows, dark elements
+    static let navy = Color(hex: "#0C2957")
+    
+    // #9EC8EC — card backgrounds, subtle accents
+    static let lightBlue = Color(hex: "#9EC8EC")
+    
+    // #FFFFFF — main background, cards
+    static let appWhite = Color(hex: "#FFFFFF")
+}
+
+/* ============================================
+   SEMANTIC COLORS
+   ============================================ */
+extension Color {
+    // Study Task card background
+    static let studyTaskBackground = Color.lightBlue.opacity(0.25)
+    
+    // Developer card background
+    static let developerBackground = Color.navy.opacity(0.08)
+    
+    // Study Task badge color
+    static let studyTaskBadge = Color.primaryBlue
+    
+    // Developer badge color
+    static let developerBadge = Color.navy
+    
+    // Bottom nav background
+    static let bottomNavBackground = Color.white.opacity(0.92)
+    
+    // Card shadow color
+    static let cardShadow = Color.navy.opacity(0.1)
+}
 import SwiftUI
 
 // MARK: - Color Hex Extension
